@@ -84,4 +84,99 @@ static inline int64_t lex_ordered_read_int64(uint8_t *buffer) {
     return value_bits.s;
 }
 
+typedef union {
+    uint32_t u;
+    float f;
+} float_bits;
+
+static inline void lex_ordered_write_float(uint8_t *buffer, float value) {
+    uint32_t encoded;
+    if (value == 0) {
+        encoded = (1u << 31);
+    } else if (isnan(value)) {
+        encoded = UINT_MAX;
+    } else if (value > FLT_MAX) {
+        encoded = UINT_MAX - 1;
+    } else if (value < -FLT_MAX) {
+        encoded = 0;
+    } else {
+        float_bits value_bits;
+        value_bits.f = value;
+        if ((value_bits.u & (1U << 31)) == 0) {
+            encoded = value_bits.u | (1U << 31);
+        } else {
+            encoded = ~value_bits.u;
+        }
+    }
+    write_uint32_big_endian(buffer, encoded);
+}
+
+
+static inline float lex_ordered_read_float(uint8_t *buffer) {
+    uint32_t encoded = read_uint32_big_endian(buffer);
+    if (encoded == UINT_MAX) {
+        return NAN;
+    } else if (encoded == UINT_MAX - 1) {
+        return INFINITY;
+    } else if (encoded == 0) {
+        return -INFINITY;
+    } else {
+        float_bits value_bits;
+        if ((encoded & (1U << 31))) {
+            value_bits.u = encoded ^ (1U << 31);
+        } else {
+            // negative
+            value_bits.u = ~encoded;
+        }
+        return value_bits.f;
+    }
+}
+
+typedef union {
+    uint64_t u;
+    double d;
+} double_bits;
+
+static inline void lex_ordered_write_double(uint8_t *buffer, double value) {
+    uint64_t encoded;
+    if (value == 0) {
+        encoded = (1ULL << 63);
+    } else if (isnan(value)) {
+        encoded = ULLONG_MAX;
+    } else if (value > DBL_MAX) {
+        encoded = ULLONG_MAX - 1;
+    } else if (value < -DBL_MAX) {
+        encoded = 0;
+    } else {
+        double_bits value_bits;
+        value_bits.d = value;
+        if ((value_bits.u & (1ULL << 63)) == 0) {
+            encoded = value_bits.u | (1ULL << 63);
+        } else {
+            encoded = ~value_bits.u;
+        }
+    }
+    write_uint64_big_endian(buffer, encoded);
+}
+
+static inline double lex_ordered_read_double(uint8_t *buffer) {
+    uint64_t encoded = read_uint64_big_endian(buffer);
+    if (encoded == ULLONG_MAX) {
+        return NAN;
+    } else if (encoded == ULLONG_MAX - 1) {
+        return INFINITY;
+    } else if (encoded == 0) {
+        return -INFINITY;
+    } else {
+        double_bits value_bits;
+        if ((encoded & (1ull << 63))) {
+            value_bits.u = encoded ^ (1ull << 63);
+        } else {
+            // negative
+            value_bits.u = ~encoded;
+        }
+        return value_bits.d;
+    }
+}
+
 #endif // LEX_ORDER_H
