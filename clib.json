@@ -1,6 +1,6 @@
 {
     "name": "lex_order",
-    "version": "0.0.0",
+    "version": "0.1.0",
     "repo": "goodcleanfun/lex_order",
     "description": "Convert numeric types into binary-comparable representations for lexicographic sorting and trie storage",
     "keywords": [],
