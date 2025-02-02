@@ -1,0 +1,18 @@
+{
+    "name": "lex_order",
+    "version": "0.0.0",
+    "repo": "goodcleanfun/lex_order",
+    "description": "Convert numeric types into binary-comparable representations for lexicographic sorting and trie storage",
+    "keywords": [],
+    "license": "MIT",
+    "dependencies": {
+      "goodcleanfun/byte_order": "*"
+    },
+    "development": {
+      "silentbicycle/greatest": "*"
+    },
+    "src": [
+      "src/lex_order.h"
+    ]
+    
+  }
