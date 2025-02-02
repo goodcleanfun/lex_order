@@ -5,6 +5,26 @@
 #include "lex_order.h"
 
 TEST test_lex_order(void) {
+    int8_t c = -1;
+    uint8_t buf8n[1];
+    lex_ordered_write_int8(buf8n, c);
+    ASSERT_EQ(lex_ordered_read_int8(buf8n), c);
+
+    c = 0;
+    uint8_t buf8z[1];
+    lex_ordered_write_int8(buf8z, c);
+    ASSERT_EQ(lex_ordered_read_int8(buf8z), c);
+
+    c = 1;
+    uint8_t buf8[1];
+    lex_ordered_write_int8(buf8, c);
+    ASSERT_EQ(lex_ordered_read_int8(buf8), c);
+
+    // Test that negative signed integers are lexicographically
+    // less than zero or positive signed integers
+    ASSERT(strcmp((char *)buf8n, (char *)buf8z) < 0);
+    ASSERT(strcmp((char *)buf8n, (char *)buf8) < 0);
+
     uint8_t buf16u[2];
     
     uint16_t unsigned_short_tests[] = {0, 1234, 0x8000, 0x8001, 0xFFFF};
@@ -178,7 +198,7 @@ TEST test_lex_order(void) {
     ASSERT(strcmp((char *)buf_double_inf, (char *)buf_double) > 0);
     ASSERT(strcmp((char *)buf_double_nan, (char *)buf_double_inf) > 0);
     ASSERT(strcmp((char *)buf_double_neginf, (char *)buf_doublen) < 0);
-    
+
 
     PASS();
 }

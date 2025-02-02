@@ -8,6 +8,14 @@
 
 #include "byte_order/byte_order.h"
 
+static inline void lex_ordered_write_int8(uint8_t *buffer, int8_t value) {
+    buffer[0] = (uint8_t)(value ^ 0x80);
+}
+
+static inline int8_t lex_ordered_read_int8(uint8_t *buffer) {
+    return (int8_t)(buffer[0] ^ 0x80);
+}
+
 static inline void lex_ordered_write_uint16(uint8_t *buffer, uint16_t value) {
     write_uint16_big_endian(buffer, value);
 }
