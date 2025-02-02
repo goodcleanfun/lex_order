@@ -69,6 +69,8 @@ jobs:
         run: |
           mkdir -p deps\greatest
           curl -L https://github.com/silentbicycle/greatest/raw/release/greatest.h -o deps\greatest\greatest.h
+          mkdir -p deps\byte_order
+          curl -L https://raw.githubusercontent.com/goodcleanfun/byte_order/refs/heads/main/src/byte_order.h -o deps\byte_order\byte_order.h
       - name: Run tests with MSVC
         run: make CC=cl test
 
@@ -89,6 +91,6 @@ jobs:
         run: |
           mkdir -p deps/greatest
           curl -L https://github.com/silentbicycle/greatest/raw/release/greatest.h -o deps/greatest/greatest.h
-      - name: Build and Test with MinGW
-        run: |
+          mkdir -p deps/byte_order
+          curl -L https://raw.githubusercontent.com/goodcleanfun/byte_order/refs/heads/main/src/byte_order.h -o deps/byte_order/byte_order.h      - name: Build and Test with MinGW
           make CC=gcc test
